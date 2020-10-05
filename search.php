@@ -1,6 +1,15 @@
 <?php
 include "includes/db.php";
 include "includes/header.php";
+
+// print_r($_POST);
+
+if (!($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['search'] != '')) {
+    header("Location: http://cms_edwin/");
+}
+
+$search = strtolower(htmlspecialchars($_POST['search']));
+// print_r($search);
 ?>
 
     <!-- Navigation -->
@@ -20,11 +29,14 @@ include "includes/header.php";
                 </h1>
 
                 <?php 
-                $query = "SELECT * FROM post";
-                
-                $result = $conn->query($query);
+                $query = "SELECT * FROM post WHERE LOWER(post_tags) LIKE LOWER('%$search%')";
+                $stmt = $conn->prepare($query);
+                // print_r($search);
+                // $stmt->bindValue(1, $search, PDO::PARAM_STR);
+                $stmt->execute();
+                // print_r($stmt->fetchAll());
 
-                while ($row = $result->fetch()) {
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     // print_r($row);
                 ?> 
                 <!-- Blog Post -->
